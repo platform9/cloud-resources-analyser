@@ -68,10 +68,18 @@ func DescribeInstancesCmd() {
 		fmt.Println("Reservation ID: " + *r.ReservationId)
 		fmt.Println("Instance IDs:")
 		for _, i := range r.Instances {
-			fmt.Println("   " + *i.InstanceId)
+			fmt.Println("ID:   " + *i.InstanceId)
+			fmt.Println("Flavour:   " + i.InstanceType)
+			if i.KeyName != nil {
+				fmt.Println("KeyName:   " + *i.KeyName)
+			}
+			fmt.Println("Launch Time: ", *i.LaunchTime)
+			fmt.Println("Instance State: " + i.State.Name)
+			if i.Tags != nil {
+				fmt.Println("Key " + *i.Tags[0].Key + " Value " + *i.Tags[0].Value)
+			}
 		}
-
-		fmt.Println("")
+		fmt.Println("\n***\n")
 	}
 }
 
