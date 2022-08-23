@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var list_ec2 = `
+var listEc2 = `
   # Get all EC2 instances in a given region.
   Ex: cloud-analyser listEc2
   `
@@ -14,7 +14,7 @@ var (
 	listEc2Cmd = &cobra.Command{
 		Use:     "listEc2",
 		Short:   "Show all the running EC2 instances in a given region",
-		Example: list_ec2,
+		Example: listEc2,
 		Long:    `"Show all the running EC2 instances in a given region"`,
 		Run:     listEc2Run,
 	}
