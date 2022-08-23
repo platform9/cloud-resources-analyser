@@ -8,12 +8,11 @@ import (
 var listEc2 = `
   # Get all EC2 instances in a given region.
   Ex: cloud-analyser listEc2
-  `
-var listEc2i = `
-  # Get  EC2 instances in a given region.
-  Ex: cloud-analyser listEc2i
-  `
-
+`
+var key_name = `
+  # Get all EC2 instances in a given region.
+  Ex: cloud-analyser listEc2
+`
 var (
 	listEc2Cmd = &cobra.Command{
 		Use:     "listEc2",
@@ -40,6 +39,6 @@ func listEc2Run(cmd *cobra.Command, args []string) {
 	if all {
 		logic.DescribeInstancesCmd()
 	} else {
-		logic.GetInstancebykeyCmd()
+		logic.DescribeInstancesCmd(key_name)
 	}
 }

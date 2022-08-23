@@ -28,11 +28,14 @@ func GetInstances(c context.Context, api EC2DescribeInstancesAPI, input *ec2.Des
 	return api.DescribeInstances(c, input)
 }
 
-func DescribeInstancesCmd() {
+func DescribeInstancesCmd(key ...string) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		panic("configuration error, " + err.Error())
 	}
+	var key_name string
+	fmt.Print("Enter the key_name you are searching for:\n")
+	fmt.Scan(&key_name)
 
 	client := ec2.NewFromConfig(cfg)
 
@@ -58,54 +61,12 @@ func DescribeInstancesCmd() {
 			if i.KeyName != nil {
 				keyName = *i.KeyName
 			}
-			instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
-			Output = append(Output, instanceInfo)
+			if keyName == key_name {
+				instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
+				Output = append(Output, instanceInfo)
+			}
 		}
 	}
 	tabularClusterInfo := columnize.SimpleFormat(Output)
 	fmt.Println(tabularClusterInfo)
-}
-
-func GetInstancebykeyCmd() {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		panic("configuration error, " + err.Error())
-	}
-	var key string
-	fmt.Print("Enter the key_name you are searching for:\n")
-	fmt.Scan(&key)
-
-	client := ec2.NewFromConfig(cfg)
-
-	input := &ec2.DescribeInstancesInput{}
-
-	result, err := GetInstances(context.TODO(), client, input)
-	if err != nil {
-		fmt.Println("Got an error retrieving information about your Amazon EC2 instances:")
-		fmt.Println(err)
-		return
-	}
-	var Output1 []string
-	var tableFormat = "Instance ID | Flavour | KeyName | Age | State| Tag-Key | Tag-Value"
-	Output1 = append(Output1, tableFormat)
-	for _, r := range result.Reservations {
-		for _, i := range r.Instances {
-			var tag, value, keyName string = "-", "-", "-"
-			age := time.Since(*i.LaunchTime).Round(time.Second).String()
-			if i.Tags != nil {
-				tag = *i.Tags[0].Key
-				value = *i.Tags[0].Value
-			}
-			if i.KeyName != nil {
-				keyName = *i.KeyName
-			}
-			if keyName == key {
-				instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
-				Output1 = append(Output1, instanceInfo)
-			}
-		}
-	}
-	tabularClusterInfo := columnize.SimpleFormat(Output1)
-	fmt.Println(tabularClusterInfo)
-
 }
