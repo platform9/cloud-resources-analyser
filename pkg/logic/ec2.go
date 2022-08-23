@@ -28,7 +28,7 @@ func GetInstances(c context.Context, api EC2DescribeInstancesAPI, input *ec2.Des
 	return api.DescribeInstances(c, input)
 }
 
-func DescribeInstancesCmd() {
+func DescribeInstancesCmd(key string) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		panic("configuration error, " + err.Error())
@@ -58,8 +58,16 @@ func DescribeInstancesCmd() {
 			if i.KeyName != nil {
 				keyName = *i.KeyName
 			}
-			instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
-			Output = append(Output, instanceInfo)
+			if key == "" {
+				instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
+				Output = append(Output, instanceInfo)
+			} else {
+				if key == keyName {
+					instanceInfo := fmt.Sprintf("%v | %v | %v | %v | %v | %v | %v", *i.InstanceId, i.InstanceType, keyName, age, i.State.Name, tag, value)
+					Output = append(Output, instanceInfo)
+				}
+			}
+
 		}
 	}
 	tabularClusterInfo := columnize.SimpleFormat(Output)

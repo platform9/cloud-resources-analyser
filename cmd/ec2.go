@@ -8,7 +8,10 @@ import (
 var listEc2 = `
   # Get all EC2 instances in a given region.
   Ex: cloud-analyser listEc2
-  `
+
+  # Get EC2 instances by key
+  Ex: cloud-analyser listEc2 -k <KEY>
+`
 
 var (
 	listEc2Cmd = &cobra.Command{
@@ -21,19 +24,19 @@ var (
 )
 
 var (
-	all bool
-	//region string
+	keyName string
 )
 
 func init() {
 	rootCmd.AddCommand(listEc2Cmd)
-	//appCmdPodRes.Flags().StringVarP(&region, "region", "r", "", "AWS Region")
-	listEc2Cmd.Flags().BoolVarP(&all, "all", "a", true, "To fetch all EC2 instances")
+	listEc2Cmd.Flags().StringVarP(&keyName, "key", "k", "", "Key Name to filter")
 }
 
 func listEc2Run(cmd *cobra.Command, args []string) {
 
-	if all {
-		logic.DescribeInstancesCmd()
+	if keyName == "" {
+		logic.DescribeInstancesCmd("")
+	} else {
+		logic.DescribeInstancesCmd(keyName)
 	}
 }
